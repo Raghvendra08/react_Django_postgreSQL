@@ -1,11 +1,11 @@
 version: '3.9'
 
-
 services:
+  # PostgreSQL Database Service
   db:
     image: postgres:14-alpine
     ports:
-      - '5433:5432'
+      - '5433:5432'  # Map host port 5433 to container port 5432
 
     environment:
       - POSTGRES_PASSWORD=postgres
@@ -13,24 +13,26 @@ services:
       - POSTGRES_DB=postgres
 
     volumes:
-      - ./data/db:/var/lib/postgresql/data/
+      - ./data/db:/var/lib/postgresql/data/  # Map database data directory to host
 
+  # Frontend Service
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
 
     ports:
-      - '3000:3000'
+      - '3000:3000'  # Map host port 3000 to container port 3000
 
     volumes:
-      - ./frontend:/app/frontend
+      - ./frontend:/app/frontend  # Map frontend code directory to container
 
     depends_on:
-      - backend
+      - backend  # Ensure backend service is started before frontend
 
-  backend: 
-    build: 
+  # Backend Service
+  backend:
+    build:
       context: ./backend
       dockerfile: Dockerfile
 
@@ -40,10 +42,10 @@ services:
       - POSTGRES_DB=postgres
 
     ports:
-      - '8000:8000'
+      - '8000:8000'  # Map host port 8000 to container port 8000
 
     volumes:
-      - ./backend:/app/backend
+      - ./backend:/app/backend  # Map backend code directory to container
 
     depends_on:
-      - db
+      - db  # Ensure database service is started before backend
